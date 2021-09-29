@@ -4,18 +4,18 @@ namespace App\Http\Controllers\Pizza;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Pizza\IngredientesUsuario;
+use App\Http\Interfaces\Pizza\IngredientesUsuarioInterface;
 
 class IngredientesUsuarioController extends Controller
 {
+    private $_ingredientesUsuarioInterface;
+    public function __construct(IngredientesUsuarioInterface $ingredientesUsuarioInterface){
+        $this->_ingredientesUsuarioInterface = $ingredientesUsuarioInterface;
+    }
+
     public function findIngredientsByTwitchId($id)
     {
-        return \DB::table('ingredientes_usuario')
-        ->select('ingredientes_usuario.id_ingrediente','ingredientes_usuario.quantidade', 'ingredientes.descricao')
-        ->join('usuarios','usuarios.id','=','ingredientes_usuario.id_usuario')
-        ->join('ingredientes','ingredientes.id','=','ingredientes_usuario.id_ingrediente')
-        ->where(['usuarios.twitch_id' => $id])
-        ->get();
+        return $this->_ingredientesUsuarioInterface->findIngredientsByTwitchId($id);
     }
 
 }

@@ -13,7 +13,10 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(
+            'App\Http\Interfaces\Pizza\IngredientesUsuarioInterface',
+            'App\Http\Repositories\Pizza\IngredientesUsuarioRepository'
+        );
     }
 
     /**

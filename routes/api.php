@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Pizza\IngredientesUsuarioController;
+use App\Http\Repositories\Pizza\IngredientesUsuarioRepository;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,6 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('pizza/ingredientes/{id}', function($id){
-    $controller = new IngredientesUsuarioController();
+    $ingredientesUsuarioRepository = new IngredientesUsuarioRepository();
+    $controller = new IngredientesUsuarioController($ingredientesUsuarioRepository);
     return $controller->findIngredientsByTwitchId($id);
 });
