@@ -18,4 +18,9 @@ class IngredientesUsuarioController extends Controller
         return $this->_ingredientesUsuarioInterface->findIngredientsByTwitchId($id);
     }
 
+    public function checkIngredienteByTwitchId($ingredient_id, $twitch_id)
+    {
+        return $this->_ingredientesUsuarioInterface->checkIngredienteByTwitchId($ingredient_id, $twitch_id);
+    }
+
 }
