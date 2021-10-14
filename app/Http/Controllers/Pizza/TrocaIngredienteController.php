@@ -51,27 +51,19 @@ class TrocaIngredienteController extends Controller
     $id_troca - id da troca
     $twitch_id - id da pessoa que vai receber a troca os ingredientes
     */
-    //TODO: REVISAR - não remove mais o elemento, soma o novo, não apaga a troca
     public function confirmaTrocaIngrediente($data){
-        //buscar dados da troca
         $dadosTroca = $this->_trocaIngredienteInterface->buscarDadosTroca($data['troca_id']);
+        if($this->_trocaIngredienteInterface->validaTrocaAtiva($data['troca_id'])){
+            $quantidade = $this->_ingredientesUsuarioInterface->checkIngredienteByTwitchId($dadosTroca->id_ingrediente_requerido, $data['twitch_id']);
+            $quantidade = $quantidade->quantidade;
         
-        //verificar se a troca pode ocorrer (quantidade no usuario)
-        //verificar disponibilidade do ingrediente no aceitador
-        $quantidade = $this->_ingredientesUsuarioInterface->checkIngredienteByTwitchId($dadosTroca->id_ingrediente_requerido, $data['twitch_id']);
-        $quantidade = $quantidade->quantidade;
-        if($quantidade >= $dadosTroca->quantidade_requerida){
-            //remover e salvar ingr solicitado na troca do destinatario (aceita a troca)
-            $novaQuantidade = $quantidade - $dadosTroca->quantidade_requerida;
-            $this->_ingredientesUsuarioInterface->removeIngredienteByTwitchId($dadosTroca->id_ingrediente_requerido, $data['twitch_id'], $novaQuantidade);
-
-            //adiciona no aceitador ingredientes da troca
-            
-            $this->_ingredientesUsuarioInterface->addIngredienteByTwitchId($dadosTroca->id_ingrediente, $data['twitch_id'], $dadosTroca->quantidade);
-            //adiciona no solicitador, ingredientes do aceitador
-            $this->_ingredientesUsuarioInterface->addIngredienteByTwitchId($dadosTroca->id_ingrediente_requerido, $dadosTroca->twitch_id, $quantidade);
-            //apaga registro da troca
-            $this->_trocaIngredienteInterface->confirmaTroca($data['troca_id']);
+            if($quantidade >= $dadosTroca->quantidade_requerida){
+                $novaQuantidade = $quantidade - $dadosTroca->quantidade_requerida;
+                $this->_ingredientesUsuarioInterface->removeIngredienteByTwitchId($dadosTroca->id_ingrediente_requerido, $data['twitch_id'], $novaQuantidade);
+                $this->_ingredientesUsuarioInterface->addIngredienteByTwitchId($dadosTroca->id_ingrediente, $data['twitch_id'], $dadosTroca->quantidade);
+                $this->_ingredientesUsuarioInterface->addIngredienteByTwitchId($dadosTroca->id_ingrediente_requerido, $dadosTroca->twitch_id, $dadosTroca->quantidade_requerida);
+                $this->_trocaIngredienteInterface->confirmaTroca($data['troca_id']);
+            }
         }
     }
 

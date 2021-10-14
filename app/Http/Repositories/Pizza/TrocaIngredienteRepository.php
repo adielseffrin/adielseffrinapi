@@ -19,8 +19,14 @@ class TrocaIngredienteRepository implements TrocaIngredienteInterface{
     //0 IDLE, 1 COMPLETED, 2 CANCELED, 3 EXPIRED
     private function setStatusTroca($id_troca, $status){
         return TrocaIngrediente::where([ 'id' => $id_troca,])
-        ->first()
         ->update(array('status' => $status)); 
+    }
+
+    public function validaTrocaAtiva($troca_id){
+        return TrocaIngrediente::select('status')
+        ->where([ 'id' => $troca_id])
+        ->first()
+        ->status == 0; 
     }
 
     public function confirmaTroca($id_troca)
