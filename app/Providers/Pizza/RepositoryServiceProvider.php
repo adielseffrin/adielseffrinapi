@@ -22,6 +22,11 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Http\Interfaces\Pizza\TrocaIngredienteInterface',
             'App\Http\Repositories\Pizza\TrocaIngredienteRepository'
         );
+
+        $this->app->bind(
+            'App\Http\Interfaces\Pizza\UsuarioInterface',
+            'App\Http\Repositories\Pizza\UsuarioRepository'
+        );
     }
 
     /**

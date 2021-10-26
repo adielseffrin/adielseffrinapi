@@ -4,9 +4,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Pizza\IngredientesUsuarioController;
+use App\Http\Controllers\Pizza\UsuarioController;
 use App\Http\Controllers\Pizza\TrocaIngredienteController;
 
 use App\Http\Repositories\Pizza\IngredientesUsuarioRepository;
+use App\Http\Repositories\Pizza\UsuarioRepository;
 use App\Http\Repositories\Pizza\TrocaIngredienteRepository;
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +23,19 @@ use App\Http\Repositories\Pizza\TrocaIngredienteRepository;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::get('pizza/info/{id}', function($id){
+    $ingredientesUsuarioRepository = new IngredientesUsuarioRepository();
+    $controllerIngr = new IngredientesUsuarioController($ingredientesUsuarioRepository);
+    $ingredientes =  $controllerIngr->findIngredientsByTwitchId($id);
+    
+    $UsuarioRepository = new UsuarioRepository();
+    $controllerUser = new UsuarioController($UsuarioRepository);
+    $userInfo =  $controllerUser->getUserInfo($id);
+
+    return json_encode( Array('info'=> $userInfo, 'ingredientes'=> $ingredientes));
+
 });
 
 Route::get('pizza/ingredientes/{id}', function($id){
