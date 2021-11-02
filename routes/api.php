@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Token;
 
 use App\Http\Controllers\Pizza\IngredientesUsuarioController;
 use App\Http\Controllers\Pizza\UsuarioController;
@@ -25,8 +27,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('pizza/info/{id}', function(Request $request, $id){
+Route::get('pizza/info', function(Request $request){
 
+    $twitch_token = $request->header('JWT');
+    $token = new Token($twitch_token);
+    $payload = JWTAuth::setToken($token->get())->getPayload();
+
+    $id = $payload['user_id'];
     $ingredientesUsuarioRepository = new IngredientesUsuarioRepository();
     $controllerIngr = new IngredientesUsuarioController($ingredientesUsuarioRepository);
     $ingredientes =  $controllerIngr->findIngredientsByTwitchId($id);
@@ -35,9 +42,8 @@ Route::get('pizza/info/{id}', function(Request $request, $id){
     $controllerUser = new UsuarioController($UsuarioRepository);
     $userInfo =  $controllerUser->getUserInfo($id);
 
-    // return json_encode( Array('info'=> $userInfo, 'ingredientes'=> $ingredientes));
-    return json_encode($request->header('JWT'));
-
+    return json_encode( array('info'=> $userInfo, 'ingredientes'=> $ingredientes));
+    
 });
 
 Route::get('pizza/ingredientes/{id}', function($id){
