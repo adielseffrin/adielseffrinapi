@@ -25,7 +25,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('pizza/info/{id}', function($id){
+Route::get('pizza/info/{id}', function(Request $request, $id){
+
     $ingredientesUsuarioRepository = new IngredientesUsuarioRepository();
     $controllerIngr = new IngredientesUsuarioController($ingredientesUsuarioRepository);
     $ingredientes =  $controllerIngr->findIngredientsByTwitchId($id);
@@ -34,7 +35,8 @@ Route::get('pizza/info/{id}', function($id){
     $controllerUser = new UsuarioController($UsuarioRepository);
     $userInfo =  $controllerUser->getUserInfo($id);
 
-    return json_encode( Array('info'=> $userInfo, 'ingredientes'=> $ingredientes));
+    // return json_encode( Array('info'=> $userInfo, 'ingredientes'=> $ingredientes));
+    return json_encode($request->header('JWT'));
 
 });
 
