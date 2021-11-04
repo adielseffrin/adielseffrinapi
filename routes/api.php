@@ -42,18 +42,30 @@ Route::get('pizza/info', function(Request $request){
     $controllerUser = new UsuarioController($UsuarioRepository);
     $userInfo =  $controllerUser->getUserInfo($id);
 
-    return json_encode( array('info'=> $userInfo, 'ingredientes'=> $ingredientes));
+    return json_encode( array('info'=> $userInfo, 'ingredientes'=> $ingredientes, 'debug'=>$twitch_token));
     
 });
 
-Route::get('pizza/ingredientes/{id}', function($id){
+Route::get('pizza/ingredientes', function(Request $request){
+    $twitch_token = $request->header('JWT');
+    $token = new Token($twitch_token);
+    $payload = JWTAuth::setToken($token->get())->getPayload();
+
+    $id = $payload['user_id'];
+
     $ingredientesUsuarioRepository = new IngredientesUsuarioRepository();
     $controller = new IngredientesUsuarioController($ingredientesUsuarioRepository);
     return $controller->findIngredientsByTwitchId($id);
 });
 
 Route::post('pizza/criartroca/', function(Request $request){
+    $twitch_token = $request->header('JWT');
+    $token = new Token($twitch_token);
+    $payload = JWTAuth::setToken($token->get())->getPayload();
+    
     $data = $request->all();
+    $data['twitch_id'] = $payload['user_id'];
+
     $trocaIngredientesRepository = new TrocaIngredienteRepository();
     $ingredientesUsuarioRepository = new IngredientesUsuarioRepository();
     $controller = new TrocaIngredienteController($trocaIngredientesRepository, $ingredientesUsuarioRepository);
@@ -68,17 +80,22 @@ Route::post('pizza/criartroca/', function(Request $request){
 });
 
 Route::post('pizza/confirmatroca/', function(Request $request){
+    $twitch_token = $request->header('JWT');
+    $token = new Token($twitch_token);
+    $payload = JWTAuth::setToken($token->get())->getPayload();
+
     $data = $request->all(); 
+    $data['twitch_id'] = $payload['user_id'];
     $trocaIngredientesRepository = new TrocaIngredienteRepository();
     $ingredientesUsuarioRepository = new IngredientesUsuarioRepository();
     $controller = new TrocaIngredienteController($trocaIngredientesRepository, $ingredientesUsuarioRepository);
     
-    // try{
+    try{
         $troca = $controller->confirmaTrocaIngrediente($data);
         return response()->json(['post' => $data, 'debug'=>$troca], 201);
-    // }catch(Exception $e){
-    //     return response()->json(['post' => $data, 'error' => $e], 418);
-    // }
+    }catch(Exception $e){
+        return response()->json(['post' => $data, 'error' => $e], 418);
+    }
 });
 Route::post('pizza/cancelatroca/', function(Request $request){});
 //Route::post('pizza/cancelatrocas/', function(Request $request){};

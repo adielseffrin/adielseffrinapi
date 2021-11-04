@@ -25,7 +25,7 @@ class TrocaIngredienteController extends Controller
     {
         //verificar disponibilidade do ingrediente
         $quantidade = $this->_ingredientesUsuarioInterface->checkIngredienteByTwitchId($data['ingrediente_id'], $data['twitch_id']);
-        $quantidade = $quantidade[0]->quantidade;
+        $quantidade = $quantidade->quantidade;
         
         if($data['quantidade'] <= $quantidade){
             //retirar do inventario
