@@ -8,10 +8,12 @@ use Tymon\JWTAuth\Token;
 use App\Http\Controllers\Pizza\IngredientesUsuarioController;
 use App\Http\Controllers\Pizza\UsuarioController;
 use App\Http\Controllers\Pizza\TrocaIngredienteController;
+use App\Http\Controllers\Pizza\TentativasFomeController;
 
 use App\Http\Repositories\Pizza\IngredientesUsuarioRepository;
 use App\Http\Repositories\Pizza\UsuarioRepository;
 use App\Http\Repositories\Pizza\TrocaIngredienteRepository;
+use App\Http\Repositories\Pizza\TentativasFomeRepository;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,22 +29,45 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('pizza/info', function(Request $request){
+Route::get('pizza/ping', function(){
+    $headers = [
+        'Access-Control-Allow-Methods'=> 'POST, GET, OPTIONS, PUT, DELETE',
+        'Access-Control-Allow-Headers'=> 'X-Requested-With, Content-Type, X-Auth-Token, Origin, Authorization, Jwt',
+        'Access-Control-Allow-Origin'=> '*',
+        'Access-Control-Allow-Credentials'=> 'true'
+    ];
+    return \Response::make('PONG', 200, $headers);
+});
 
+Route::get('pizza/info', function(Request $request){
+    
+    $headers = [
+        'Access-Control-Allow-Methods'=> 'POST, GET, OPTIONS, PUT, DELETE',
+        'Access-Control-Allow-Headers'=> 'X-Requested-With, Content-Type, X-Auth-Token, Origin, Authorization, Jwt',
+        'Access-Control-Allow-Origin'=> '*',
+        'Access-Control-Allow-Credentials'=> 'true'
+    ];
+    
     $twitch_token = $request->header('JWT');
     $token = new Token($twitch_token);
     $payload = JWTAuth::setToken($token->get())->getPayload();
-
+    
+    
     $id = $payload['user_id'];
     $ingredientesUsuarioRepository = new IngredientesUsuarioRepository();
     $controllerIngr = new IngredientesUsuarioController($ingredientesUsuarioRepository);
     $ingredientes =  $controllerIngr->findIngredientsByTwitchId($id);
-    
+   
     $UsuarioRepository = new UsuarioRepository();
     $controllerUser = new UsuarioController($UsuarioRepository);
     $userInfo =  $controllerUser->getUserInfo($id);
-
-    return json_encode( array('info'=> $userInfo, 'ingredientes'=> $ingredientes, 'debug'=>$twitch_token));
+    
+    $tentativaFomeRepository = new TentativasFomeRepository();
+    $controllerTentativasFome = new TentativasFomeController($tentativaFomeRepository);
+    $userInfo['pontos'] = $controllerTentativasFome->getUserPoints($id);
+    
+    return json_encode( array('info'=> $userInfo, 'ingredientes'=> $ingredientes, 'debug'=>$id));
+    
     
 });
 

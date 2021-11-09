@@ -27,6 +27,11 @@ class RepositoryServiceProvider extends ServiceProvider
             'App\Http\Interfaces\Pizza\UsuarioInterface',
             'App\Http\Repositories\Pizza\UsuarioRepository'
         );
+
+        $this->app->bind(
+            'App\Http\Interfaces\Pizza\TentativasFomeInterface',
+            'App\Http\Repositories\Pizza\TentativasFomeRepository'
+        );
     }
 
     /**
