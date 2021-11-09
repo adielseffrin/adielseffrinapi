@@ -48,25 +48,27 @@ Route::get('pizza/info', function(Request $request){
         'Access-Control-Allow-Credentials'=> 'true'
     ];
     
-    $twitch_token = $request->header('JWT');
-    $token = new Token($twitch_token);
-    $payload = JWTAuth::setToken($token->get())->getPayload();
+     
+        $twitch_token = $request->header('JWT');
+        $token = new Token($twitch_token);
+        $payload = JWTAuth::setToken($token->get())->getPayload();
+        
+        
+        $id = $payload['user_id'];
+        $ingredientesUsuarioRepository = new IngredientesUsuarioRepository();
+        $controllerIngr = new IngredientesUsuarioController($ingredientesUsuarioRepository);
+        $ingredientes =  $controllerIngr->findIngredientsByTwitchId($id);
     
-    
-    $id = $payload['user_id'];
-    $ingredientesUsuarioRepository = new IngredientesUsuarioRepository();
-    $controllerIngr = new IngredientesUsuarioController($ingredientesUsuarioRepository);
-    $ingredientes =  $controllerIngr->findIngredientsByTwitchId($id);
-   
-    $UsuarioRepository = new UsuarioRepository();
-    $controllerUser = new UsuarioController($UsuarioRepository);
-    $userInfo =  $controllerUser->getUserInfo($id);
-    
-    $tentativaFomeRepository = new TentativasFomeRepository();
-    $controllerTentativasFome = new TentativasFomeController($tentativaFomeRepository);
-    $userInfo['pontos'] = $controllerTentativasFome->getUserPoints($id);
-    
-    return json_encode( array('info'=> $userInfo, 'ingredientes'=> $ingredientes, 'debug'=>$id));
+        $UsuarioRepository = new UsuarioRepository();
+        $controllerUser = new UsuarioController($UsuarioRepository);
+        $userInfo =  $controllerUser->getUserInfo($id);
+        
+         $tentativaFomeRepository = new TentativasFomeRepository();
+         $controllerTentativasFome = new TentativasFomeController($tentativaFomeRepository);
+         $userInfo['pontos'] = $controllerTentativasFome->getUserPoints($id);
+         
+     return \Response::make(json_encode( array('info'=> $userInfo, 'ingredientes'=> $ingredientes, 'debug'=>$id)), 200, $headers);
+   // return json_encode( array('info'=> $userInfo, 'ingredientes'=> $ingredientes, 'debug'=>$id));
     
     
 });
