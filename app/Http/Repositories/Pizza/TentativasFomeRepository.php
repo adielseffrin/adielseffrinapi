@@ -9,12 +9,10 @@ class TentativasFomeRepository implements TentativasFomeInterface{
         return \DB::table('tentativas_fome')
         ->select('tentativas_fome.pontos')
         ->join('usuarios','usuarios.id','=','tentativas_fome.id_usuario')
-        ->where([
-            'usuarios.twitch_id' => $twitch_id,
-            'tentativas_fome.data_tentativa','>=',date('Y-m-01'),
-            'tentativas_fome.data_tentativa','<=',date('Y-m-t')
-            ])
+        ->where(['usuarios.twitch_id' => $twitch_id])
+        ->where('tentativas_fome.data_tentativa','>=',date('Y-m-01'))
+        ->where('tentativas_fome.data_tentativa','<=',date('Y-m-t'))
         ->get()
-        ->sum('tentativas_fome.pontos') ;   
+        ->sum('pontos') ;   
     }
 }
