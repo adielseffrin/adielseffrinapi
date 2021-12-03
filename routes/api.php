@@ -14,6 +14,7 @@ use App\Http\Repositories\Pizza\IngredientesUsuarioRepository;
 use App\Http\Repositories\Pizza\UsuarioRepository;
 use App\Http\Repositories\Pizza\TrocaIngredienteRepository;
 use App\Http\Repositories\Pizza\TentativasFomeRepository;
+use App\Http\Repositories\Pizza\NotificationRepository;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -37,6 +38,18 @@ Route::get('pizza/ping', function(){
         'Access-Control-Allow-Credentials'=> 'true'
     ];
     return \Response::make('PONG', 200, $headers);
+});
+
+Route::post('pizza/notificate', function(Request $request){
+    $twitch_token = $request->header('JWT');
+    $token = new Token($twitch_token);
+    $payload = JWTAuth::setToken($token->get())->getPayload();
+    $data = $request->all();
+    $data['twitch_id'] = $payload['user_id'];
+
+    $notificationRepository = new NotificationRepository();
+    $notificationRepository->notificateExtensionClients($payload);
+
 });
 
 Route::get('pizza/info', function(Request $request){
@@ -85,11 +98,10 @@ Route::get('pizza/ingredientes', function(Request $request){
     return $controller->findIngredientsByTwitchId($id);
 });
 
-Route::post('pizza/criartroca/', function(Request $request){
+Route::post('pizza/criartroca', function(Request $request){
     $twitch_token = $request->header('JWT');
     $token = new Token($twitch_token);
     $payload = JWTAuth::setToken($token->get())->getPayload();
-    
     $data = $request->all();
     $data['twitch_id'] = $payload['user_id'];
 
@@ -106,7 +118,7 @@ Route::post('pizza/criartroca/', function(Request $request){
     }
 });
 
-Route::post('pizza/confirmatroca/', function(Request $request){
+Route::post('pizza/confirmatroca', function(Request $request){
     $twitch_token = $request->header('JWT');
     $token = new Token($twitch_token);
     $payload = JWTAuth::setToken($token->get())->getPayload();
@@ -124,5 +136,5 @@ Route::post('pizza/confirmatroca/', function(Request $request){
         return response()->json(['post' => $data, 'error' => $e], 418);
     }
 });
-Route::post('pizza/cancelatroca/', function(Request $request){});
+Route::post('pizza/cancelatroca', function(Request $request){});
 //Route::post('pizza/cancelatrocas/', function(Request $request){};

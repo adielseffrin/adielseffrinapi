@@ -176,6 +176,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\Pizza\RepositoryServiceProvider::class,
+        App\Providers\WebSocketClientServiceProvider::class,
 
     ],
 
