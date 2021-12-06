@@ -22,6 +22,8 @@ class NotificationRepository implements NotificationInterface{
     public function notificateExtensionClients($message){
         if($this->connection){
             $this->connection->send($message);
+        }else{
+            error_log("Not connected on WS",0);
         }
     }
 
@@ -30,9 +32,9 @@ class NotificationRepository implements NotificationInterface{
     }
 
     public function connect(){
-        if($this->connection){
-            $this->disconnect();
-        }
+        // if($this->connection){
+        //     $this->disconnect();
+        // }
         $this->run();
     }
 
@@ -45,6 +47,7 @@ class NotificationRepository implements NotificationInterface{
                 yield $connection->send('Hello!');
             }catch(Exception $e){
                 var_dump($e);
+                error_log("Error on connect on WS: ".json_encode($e),0);
             }
             \Amp\Loop::stop();
             

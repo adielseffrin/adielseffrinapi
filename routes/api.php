@@ -41,9 +41,14 @@ Route::get('pizza/ping', function(){
 });
 
 Route::post('pizza/notificate', function(Request $request){
+    error_log("chegou a request: ".json_encode($request),0);
+    
     $twitch_token = $request->header('JWT');
     $token = new Token($twitch_token);
     $payload = JWTAuth::setToken($token->get())->getPayload();
+    
+    error_log("tenho payload: ".json_encode($payload),0);
+    
     $data = $request->all();
     $data['twitch_id'] = $payload['user_id'];
 
