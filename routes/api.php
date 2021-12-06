@@ -48,12 +48,15 @@ Route::post('pizza/notificate', function(Request $request){
     $payload = JWTAuth::setToken($token->get())->getPayload();
     
     error_log("tenho payload: ".json_encode($payload),0);
-    
+
     $data = $request->all();
     $data['twitch_id'] = $payload['user_id'];
 
+    error_log("tenho data: ".json_encode($data),0);
     $notificationRepository = new NotificationRepository();
+    error_log("tenho Repository: ",0);
     $notificationController = new NotificationController($notificationRepository);
+    error_log("tenho ontroller: ",0);
     $notificationController->notificateExtensionClients($payload);
 
 });
