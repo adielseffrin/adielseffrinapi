@@ -48,7 +48,8 @@ Route::post('pizza/notificate', function(Request $request){
     $data['twitch_id'] = $payload['user_id'];
 
     $notificationRepository = new NotificationRepository();
-    $notificationRepository->notificateExtensionClients($payload);
+    $notificationController = new NotificationController($notificationRepository);
+    $notificationController->notificateExtensionClients($payload);
 
 });
 
