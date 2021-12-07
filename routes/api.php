@@ -9,6 +9,7 @@ use App\Http\Controllers\Pizza\IngredientesUsuarioController;
 use App\Http\Controllers\Pizza\UsuarioController;
 use App\Http\Controllers\Pizza\TrocaIngredienteController;
 use App\Http\Controllers\Pizza\TentativasFomeController;
+use App\Http\Controllers\Pizza\NotificationController;
 
 use App\Http\Repositories\Pizza\IngredientesUsuarioRepository;
 use App\Http\Repositories\Pizza\UsuarioRepository;
