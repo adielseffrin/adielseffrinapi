@@ -59,7 +59,7 @@ Route::post('pizza/notificate', function(Request $request){
     //TODO aqui ta o erro
     $notificationController = new NotificationController($notificationRepository);
     error_log("tenho controller: ",0);
-    $notificationController->notificateExtensionClients($payload);
+    $notificationController->notificateExtensionClients($data);
 
 });
 
