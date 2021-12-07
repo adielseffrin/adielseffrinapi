@@ -55,8 +55,9 @@ Route::post('pizza/notificate', function(Request $request){
     error_log("tenho data: ".json_encode($data),0);
     $notificationRepository = new NotificationRepository();
     error_log("tenho Repository: ",0);
+    //TODO aqui ta o erro
     $notificationController = new NotificationController($notificationRepository);
-    error_log("tenho ontroller: ",0);
+    error_log("tenho controller: ",0);
     $notificationController->notificateExtensionClients($payload);
 
 });
