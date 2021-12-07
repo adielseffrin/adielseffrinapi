@@ -13,7 +13,7 @@ class NotificationRepository implements NotificationInterface{
     private $endpoint;
     private $connection;
 
-    function __construct() {
+    public function __construct() {
         $this->host = 'ws.adielseffr.in';
         $this->port = '8080';
         $this->endpoint = 'chat';
