@@ -46,7 +46,7 @@ class NotificationRepository implements NotificationInterface{
                 error_log("URL: ".$url,0);
                 $connection = yield Client\connect($url);
                 $this->connection = $connection;
-                yield $connection->send('Hello!');
+                //yield $connection->send('Hello!');
             }catch(Exception $e){
                 var_dump($e);
                 error_log("Error on connect on WS: ".json_encode($e),0);
