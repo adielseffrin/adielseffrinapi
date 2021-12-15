@@ -10,9 +10,7 @@ class NotificationController extends Controller
 {
     private $_notificationInterface;
     public function __construct(NotificationInterface $notificationInterface){
-        error_log("Vou contruir", 0);
         $this->_notificationInterface = $notificationInterface;
-        error_log("Já contrui", 0);
     }
 
     public function notificateExtensionClients($message)

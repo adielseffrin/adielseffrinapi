@@ -16,11 +16,10 @@ class NotificationRepository implements NotificationInterface{
     public function __construct() {
         $this->host = 'ws.adielseffr.in';
         $this->port = '8080';
-        $this->endpoint = 'chat';
+        $this->endpoint = 'pizza';
     }
 
     public function notificateExtensionClients($message){
-        error_log("Vou tentar mandar a mensagem: ".json_encode($message),0);
         if($this->connection){
             $this->connection->send($message);
         }else{
@@ -33,9 +32,6 @@ class NotificationRepository implements NotificationInterface{
     }
 
     public function connect(){
-        // if($this->connection){
-        //     $this->disconnect();
-        // }
         $this->run();
     }
 
@@ -43,7 +39,6 @@ class NotificationRepository implements NotificationInterface{
         \Amp\Loop::run(function () {
             try{
                 $url = "ws://{$this->host}:{$this->port}/{$this->endpoint}";
-                error_log("URL: ".$url,0);
                 $connection = yield Client\connect($url);
                 $this->connection = $connection;
                 //yield $connection->send('Hello!');
