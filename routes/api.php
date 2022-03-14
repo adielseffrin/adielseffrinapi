@@ -42,6 +42,8 @@ Route::get('pizza/ping', function(){
 });
 
 Route::post('pizza/notificate', function(Request $request){
+    $headers = [];
+    
     $twitch_token = $request->header('JWT');
     $token = new Token($twitch_token);
     $payload = JWTAuth::setToken($token->get())->getPayload();
@@ -51,18 +53,19 @@ Route::post('pizza/notificate', function(Request $request){
 
     $notificationRepository = new NotificationRepository();
     $notificationController = new NotificationController($notificationRepository);
-    $notificationController->notificateExtensionClients(json_encode($data));
+    $retorno = $notificationController->notificateExtensionClients($data);
 
+    return \Response::make(json_encode( array('response'=> json_encode($data))), 200, $headers);
 });
 
 Route::get('pizza/info', function(Request $request){
-    
-    $headers = [
-        'Access-Control-Allow-Methods'=> 'POST, GET, OPTIONS, PUT, DELETE',
-        'Access-Control-Allow-Headers'=> 'X-Requested-With, Content-Type, X-Auth-Token, Origin, Authorization, Jwt',
-        'Access-Control-Allow-Origin'=> '*',
-        'Access-Control-Allow-Credentials'=> 'true'
-    ];
+    $headers = [];
+    // $headers = [
+    //     'Access-Control-Allow-Methods'=> 'POST, GET, OPTIONS, PUT, DELETE',
+    //     'Access-Control-Allow-Headers'=> 'X-Requested-With, Content-Type, X-Auth-Token, Origin, Authorization, Jwt',
+    //     'Access-Control-Allow-Origin'=> '*',
+    //     'Access-Control-Allow-Credentials'=> 'true'
+    // ];
     
      
         $twitch_token = $request->header('JWT');

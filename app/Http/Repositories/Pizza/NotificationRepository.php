@@ -2,54 +2,80 @@
 
 namespace App\Http\Repositories\Pizza;
 use App\Http\Interfaces\Pizza\NotificationInterface;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
-use Amp\Delayed;
-use Amp\Websocket;
-use Amp\Websocket\Client;
 
 class NotificationRepository implements NotificationInterface{
-    private $host;
-    private $port;
-    private $endpoint;
-    private $connection;
+    private $apiUrl;
+    private $data;
+    private $headers;
+    
 
     public function __construct() {
-        $this->host = 'ws.adielseffr.in';
-        $this->port = '8080';
-        $this->endpoint = 'pizza';
+        $this->apiUrl = 'https://api.twitch.tv/extensions/message/89302205';
+        $this->headers = array(
+            "Client-Id" => $_SERVER['CLIENT_ID']
+        );
     }
 
-    public function notificateExtensionClients($message){
-        if($this->connection){
-            $this->connection->send($message);
-        }else{
-            error_log("Not connected on WS",0);
-        }
+    public function notificateExtensionClients($data){
+        // $data = "{"ingredientes":[{"ingrediente_id":"10","quantidade":1}],"twitch_id":"517975756"}
+        $message = array();
+        if(isset($data->twitch_id))
+            $message["twitch_id"] = $data->twitch_id;
+        
+        if(isset($data->ingredientes))
+            $message["ingredientes"] = $data->ingredientes;
+
+        if(isset($data->info))
+            $message["info"] = $data->info;
+        
+        $postInput = array(
+            "content_type" => "application/json",
+            "targets" => array("broadcast"),
+            "message" => json_encode($message)
+        );
+
+        $this->headers["Authorization"] = "Bearer ".$this->makeToken();
+        
+        //  return $this->headers["Authorization"];
+        // return $this->makeToken();
+        
+
+        $response = Http::withHeaders($this->headers)->post($this->apiUrl, $postInput);
+        $statusCode = $response->status();
+        // $responseBody = json_decode($response->getBody(), true);
+        return $response->getBody();
     }
 
-    public function disconnect(){
-        $this->connection->close();
-    }
+    private function makeToken()
+    {
+        $tokenHeader = json_encode(array(
+            "alg" => "HS256",
+            "typ"=> "JWT"
+        ));
+        $base64UrlHeader = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($tokenHeader));
+        
+        $date = new \DateTime('now', new \DateTimeZone('America/Sao_Paulo'));
+        $date->add(new \DateInterval('PT3M'));
 
-    public function connect(){
-        $this->run();
+        $tokenPayload = json_encode(array(
+            "exp"=> $date->getTimestamp(),
+            "user_id"=> "89302205",
+            "channel_id"=> "89302205",
+            "role"=> "external",
+            "pubsub_perms"=> array(
+                "send"=> array(
+                    "broadcast"
+                    )
+                    )
+                ));
+        $base64UrlPayload  = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($tokenPayload));
+                
+        $tokenSignature = hash_hmac("sha256", $base64UrlHeader.".".$base64UrlPayload,base64_decode($_SERVER['JWT_SECRET']),true);
+        $base64UrlSignature = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($tokenSignature));
+        
+        return $base64UrlHeader.".".$base64UrlPayload.".".$base64UrlSignature;
     }
-
-    public function run(){
-        \Amp\Loop::run(function () {
-            try{
-                $url = "ws://{$this->host}:{$this->port}/{$this->endpoint}";
-                $connection = yield Client\connect($url);
-                $this->connection = $connection;
-                //yield $connection->send('Hello!');
-            }catch(Exception $e){
-                var_dump($e);
-                error_log("Error on connect on WS: ".json_encode($e),0);
-            }
-            \Amp\Loop::stop();
-            
-        });
-    }
-
-    
 }
