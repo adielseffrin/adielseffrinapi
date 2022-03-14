@@ -13,11 +13,9 @@ class NotificationController extends Controller
         $this->_notificationInterface = $notificationInterface;
     }
 
-    public function notificateExtensionClients($message)
+    public function notificateExtensionClients($data)
     {
-        $this->_notificationInterface->run();
-        $this->_notificationInterface->notificateExtensionClients($message);
-        $this->_notificationInterface->disconnect();
+        return $this->_notificationInterface->notificateExtensionClients($data);
     }
 
     
