@@ -59,13 +59,13 @@ Route::post('pizza/notificate', function(Request $request){
 });
 
 Route::get('pizza/info', function(Request $request){
-    $headers = [];
-    // $headers = [
-    //     'Access-Control-Allow-Methods'=> 'POST, GET, OPTIONS, PUT, DELETE',
-    //     'Access-Control-Allow-Headers'=> 'X-Requested-With, Content-Type, X-Auth-Token, Origin, Authorization, Jwt',
-    //     'Access-Control-Allow-Origin'=> '*',
-    //     'Access-Control-Allow-Credentials'=> 'true'
-    // ];
+    // $headers = [];
+    $headers = [
+        'Access-Control-Allow-Methods'=> 'POST, GET, OPTIONS, PUT, DELETE',
+        'Access-Control-Allow-Headers'=> 'X-Requested-With, Content-Type, X-Auth-Token, Origin, Authorization, Jwt',
+        'Access-Control-Allow-Origin'=> '*',
+        'Access-Control-Allow-Credentials'=> 'true'
+    ];
     
      
         $twitch_token = $request->header('JWT');
@@ -121,6 +121,7 @@ Route::post('pizza/criartroca', function(Request $request){
     }
 });
 
+//TODO verificar
 Route::post('pizza/confirmatroca', function(Request $request){
     $twitch_token = $request->header('JWT');
     $token = new Token($twitch_token);
