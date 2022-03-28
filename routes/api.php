@@ -59,13 +59,13 @@ Route::post('pizza/notificate', function(Request $request){
 });
 
 Route::get('pizza/info', function(Request $request){
-    // $headers = [];
-    $headers = [
-        'Access-Control-Allow-Methods'=> 'POST, GET, OPTIONS, PUT, DELETE',
-        'Access-Control-Allow-Headers'=> 'X-Requested-With, Content-Type, X-Auth-Token, Origin, Authorization, Jwt',
-        'Access-Control-Allow-Origin'=> '*',
-        'Access-Control-Allow-Credentials'=> 'true'
-    ];
+    $headers = [];
+    // $headers = [
+    //     'Access-Control-Allow-Methods'=> 'POST, GET, OPTIONS, PUT, DELETE',
+    //     'Access-Control-Allow-Headers'=> 'X-Requested-With, Content-Type, X-Auth-Token, Origin, Authorization, Jwt',
+    //     'Access-Control-Allow-Origin'=> '*',
+    //     'Access-Control-Allow-Credentials'=> 'true'
+    // ];
     
      
         $twitch_token = $request->header('JWT');
